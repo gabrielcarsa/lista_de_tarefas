@@ -16,82 +16,84 @@ class _TodoListPageState extends State<TodoListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: TextField(
-                      controller: toDoController,
-                      decoration: const InputDecoration(
-                        labelText: "Tarefa",
-                        hintText: "Ir para a academia",
-                        border: OutlineInputBorder(),
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: TextField(
+                        controller: toDoController,
+                        decoration: const InputDecoration(
+                          labelText: "Tarefa",
+                          hintText: "Ir para a academia",
+                          border: OutlineInputBorder(),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: ElevatedButton(
-                        onPressed: () {
-                          String text = toDoController.text;
-                          setState(() {
-                            toDo.add(text);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black,
-                          padding: const EdgeInsets.all(15),
-                        ),
-                        child: const Icon(
-                          Icons.add,
-                          size: 30,
-                        )),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Flexible(
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    for(String i in toDo)
-                      ToDoListItem(),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                          onPressed: () {
+                            String text = toDoController.text;
+                            setState(() {
+                              toDo.add(text);
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.black,
+                            padding: const EdgeInsets.all(15),
+                          ),
+                          child: const Icon(
+                            Icons.add,
+                            size: 30,
+                          )),
+                    ),
                   ],
                 ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              Row(
-                children: [
-                  const Expanded(
-                    child: Text("Você possui 0 tarefas pendentes"),
+                const SizedBox(
+                  height: 15,
+                ),
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for(String i in toDo)
+                        ToDoListItem(title: i,),
+                    ],
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.black,
-                      padding: const EdgeInsets.all(15),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text("Você possui ${toDo.length} tarefas pendentes"),
                     ),
-                    child: const Text("Limpar tudo"),
-                  ),
-                ],
-              )
-            ],
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.black,
+                        padding: const EdgeInsets.all(15),
+                      ),
+                      child: const Text("Limpar tudo"),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

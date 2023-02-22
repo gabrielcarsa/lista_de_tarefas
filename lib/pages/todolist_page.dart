@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lista_de_tarefas/models/todo.dart';
 
 import '../widgets/todo_list_item.dart';
 
@@ -10,7 +11,7 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-  List<String> toDo = [];
+  List<ToDo> toDo = [];
 
   final TextEditingController toDoController = TextEditingController();
 
@@ -44,8 +45,17 @@ class _TodoListPageState extends State<TodoListPage> {
                       child: ElevatedButton(
                           onPressed: () {
                             String text = toDoController.text;
+                            String category = "Lazer";
                             setState(() {
-                              toDo.add(text);
+                              //instantiating the class
+                              ToDo newToDo = ToDo(
+                                title: text,
+                                date: DateTime.now(),
+                                category: category,
+                              );
+
+                              //adding to the list
+                              toDo.add(newToDo);
                             });
                           },
                           style: ElevatedButton.styleFrom(
@@ -66,8 +76,11 @@ class _TodoListPageState extends State<TodoListPage> {
                   child: ListView(
                     shrinkWrap: true,
                     children: [
-                      for(String i in toDo)
-                        ToDoListItem(title: i,),
+                      for (ToDo i in toDo)
+                        ToDoListItem(
+                          todo: i,
+                          onDelete: onDelete,
+                        ),
                     ],
                   ),
                 ),
@@ -77,7 +90,8 @@ class _TodoListPageState extends State<TodoListPage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Text("Você possui ${toDo.length} tarefas pendentes"),
+                      child:
+                          Text("Você possui ${toDo.length} tarefas pendentes"),
                     ),
                     const SizedBox(
                       width: 8,
@@ -98,5 +112,11 @@ class _TodoListPageState extends State<TodoListPage> {
         ),
       ),
     );
+  }
+
+  void onDelete(ToDo todo) {
+    setState(() {
+      toDo.remove(todo);
+    });
   }
 }

@@ -11,7 +11,6 @@ class TodoListPage extends StatefulWidget {
 }
 
 class _TodoListPageState extends State<TodoListPage> {
-
   List<ToDo> toDo = [];
   ToDo? deletedToDo;
   int? deletedToDoPos;
@@ -99,7 +98,7 @@ class _TodoListPageState extends State<TodoListPage> {
                       width: 8,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: showDeleteConfirmationDialog,
                       style: ElevatedButton.styleFrom(
                         primary: Colors.black,
                         padding: const EdgeInsets.all(15),
@@ -116,6 +115,55 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
+  void showDeleteConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Deseja apagar tudo?'),
+        content: Text('Você realmente deseja apagar todas as tarefas?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'Cancelar',
+              style: TextStyle(
+                color: Colors.grey[600],
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              deleteAll();
+            },
+            child: Text(
+              'Limpar tudo',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /*-----
+  FUNCTIONS
+  -----*/
+
+  //delete all tasks
+  void deleteAll(){
+    setState(() {
+      toDo.clear();
+    });
+  }
+
+  //delete a task with snackBar
   void onDelete(ToDo todo) {
     deletedToDo = todo;
     deletedToDoPos = toDo.indexOf(todo);
@@ -135,7 +183,7 @@ class _TodoListPageState extends State<TodoListPage> {
         backgroundColor: Colors.white,
         action: SnackBarAction(
           label: 'Desfazer',
-          onPressed: (){
+          onPressed: () {
             setState(() {
               toDo.insert(deletedToDoPos!, deletedToDo!);
             });

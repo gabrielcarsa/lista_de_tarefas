@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
 import 'package:lista_de_tarefas/repository/todo_repository.dart';
-
 import '../widgets/todo_list_item.dart';
 
 class TodoListPage extends StatefulWidget {
@@ -9,16 +8,28 @@ class TodoListPage extends StatefulWidget {
 
   @override
   State<TodoListPage> createState() => _TodoListPageState();
+
 }
 
 class _TodoListPageState extends State<TodoListPage> {
+
   List<ToDo> toDo = [];
   ToDo? deletedToDo;
   int? deletedToDoPos;
   final TextEditingController toDoController = TextEditingController();
   final ToDoRepository toDoRepository = ToDoRepository();
 
+  @override
+  void initState() {
+    super.initState();
 
+    //when opening the app update to-do list
+    toDoRepository.getToDoList().then((value) {
+      setState(() {
+        toDo = value;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,23 +59,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     ),
                     Expanded(
                       child: ElevatedButton(
-                          onPressed: () {
-                            String text = toDoController.text;
-                            String category = "Lazer";
-                            setState(() {
-                              //instantiating the class
-                              ToDo newToDo = ToDo(
-                                title: text,
-                                date: DateTime.now(),
-                                category: category,
-                              );
-
-                              //adding to the list
-                              toDo.add(newToDo);
-                            });
-
-                            toDoRepository.saveToDoList(toDo);
-                          },
+                          onPressed: onAdd,
                           style: ElevatedButton.styleFrom(
                             primary: Colors.black,
                             padding: const EdgeInsets.all(15),
@@ -83,7 +78,9 @@ class _TodoListPageState extends State<TodoListPage> {
                   child: ListView(
                     shrinkWrap: true,
                     children: [
+                      //a for to fill the to do list
                       for (ToDo i in toDo)
+                        //we pass as a parameter what to do and the function to the widget
                         ToDoListItem(
                           todo: i,
                           onDelete: onDelete,
@@ -120,6 +117,10 @@ class _TodoListPageState extends State<TodoListPage> {
       ),
     );
   }
+
+  /*----------
+  FUNCTIONS
+  ----------*/
 
   //will show a confirmation window for deletion
   void showDeleteConfirmationDialog() {
@@ -159,25 +160,41 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  /*-----
-  FUNCTIONS
-  -----*/
+  //add task
+  void onAdd(){
+    String text = toDoController.text;
+    String category = "Lazer";
+    setState(() {
+
+      //instantiating the class
+      ToDo newToDo = ToDo(
+        title: text,
+        date: DateTime.now(),
+        category: category,
+      );
+
+      //adding to the list
+      toDo.add(newToDo);
+    });
+    toDoRepository.saveToDoList(toDo);
+  }
 
   //delete all tasks
   void deleteAll(){
     setState(() {
       toDo.clear();
     });
+    toDoRepository.saveToDoList(toDo);
   }
 
   //delete a task with snackBar
   void onDelete(ToDo todo) {
     deletedToDo = todo;
     deletedToDoPos = toDo.indexOf(todo);
-
     setState(() {
       toDo.remove(todo);
     });
+    toDoRepository.saveToDoList(toDo);
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -194,6 +211,7 @@ class _TodoListPageState extends State<TodoListPage> {
             setState(() {
               toDo.insert(deletedToDoPos!, deletedToDo!);
             });
+            toDoRepository.saveToDoList(toDo);
           },
         ),
       ),

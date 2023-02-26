@@ -25,7 +25,7 @@ class ToDoListItem extends StatelessWidget {
             SlidableAction(
               onPressed: (BuildContext context) => onDelete(todo),
               borderRadius: BorderRadius.circular(10),
-              backgroundColor: Color(0xFFFE4A49),
+              backgroundColor: const Color(0xFFFE4A49),
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: 'Delete',

@@ -18,6 +18,7 @@ class _TodoListPageState extends State<TodoListPage> {
   int? deletedToDoPos;
   final TextEditingController toDoController = TextEditingController();
   final ToDoRepository toDoRepository = ToDoRepository();
+  String? errorText;
 
   @override
   void initState() {
@@ -47,10 +48,20 @@ class _TodoListPageState extends State<TodoListPage> {
                       flex: 3,
                       child: TextField(
                         controller: toDoController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: "Tarefa",
                           hintText: "Ir para a academia",
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
+                          errorText: errorText,
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                              width: 2,
+                            ),
+                          ),
+                          labelStyle: const TextStyle(
+                            color: Colors.black,
+                          )
                         ),
                       ),
                     ),
@@ -163,9 +174,19 @@ class _TodoListPageState extends State<TodoListPage> {
   //add task
   void onAdd(){
     String text = toDoController.text;
-    String category = "Lazer";
-    setState(() {
 
+    //checking if the text is empty
+    if(text.isEmpty){
+      setState((){
+        errorText = 'Campo não pode estar vazio!';
+      });
+      //return will cause the function to terminate at this point
+      return;
+    }
+
+    String category = "Lazer";
+
+    setState(() {
       //instantiating the class
       ToDo newToDo = ToDo(
         title: text,
@@ -173,9 +194,12 @@ class _TodoListPageState extends State<TodoListPage> {
         category: category,
       );
 
+      errorText = null;
+
       //adding to the list
       toDo.add(newToDo);
     });
+    //updating to list
     toDoRepository.saveToDoList(toDo);
   }
 
@@ -184,6 +208,7 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       toDo.clear();
     });
+    //updating to list
     toDoRepository.saveToDoList(toDo);
   }
 
@@ -194,8 +219,12 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       toDo.remove(todo);
     });
+    //updating to list
     toDoRepository.saveToDoList(toDo);
+
+    //cleaning the SnackBars
     ScaffoldMessenger.of(context).clearSnackBars();
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

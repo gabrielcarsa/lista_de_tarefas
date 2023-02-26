@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_tarefas/models/todo.dart';
+import 'package:lista_de_tarefas/repository/todo_repository.dart';
 
 import '../widgets/todo_list_item.dart';
 
 class TodoListPage extends StatefulWidget {
-  TodoListPage({Key? key}) : super(key: key);
+  const TodoListPage({Key? key}) : super(key: key);
 
   @override
   State<TodoListPage> createState() => _TodoListPageState();
@@ -15,6 +16,9 @@ class _TodoListPageState extends State<TodoListPage> {
   ToDo? deletedToDo;
   int? deletedToDoPos;
   final TextEditingController toDoController = TextEditingController();
+  final ToDoRepository toDoRepository = ToDoRepository();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +62,8 @@ class _TodoListPageState extends State<TodoListPage> {
                               //adding to the list
                               toDo.add(newToDo);
                             });
+
+                            toDoRepository.saveToDoList(toDo);
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Colors.black,
@@ -115,12 +121,13 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
+  //will show a confirmation window for deletion
   void showDeleteConfirmationDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Deseja apagar tudo?'),
-        content: Text('Você realmente deseja apagar todas as tarefas?'),
+        title: const Text('Deseja apagar tudo?'),
+        content: const Text('Você realmente deseja apagar todas as tarefas?'),
         actions: [
           TextButton(
             onPressed: () {
@@ -138,7 +145,7 @@ class _TodoListPageState extends State<TodoListPage> {
               Navigator.of(context).pop();
               deleteAll();
             },
-            child: Text(
+            child: const Text(
               'Limpar tudo',
               style: TextStyle(
                 color: Colors.red,
